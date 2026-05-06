@@ -1,0 +1,46 @@
+seed: 42
+
+model:
+  policy_checkpoint: pretrained_model/wam-flow/navsim
+  reference_checkpoint: pretrained_model/wam-flow/navsim
+  processor_path: pretrained_model/fudoki
+  text_embedding_path: pretrained_model/fudoki/text_embedding.pt
+  image_embedding_path: pretrained_model/fudoki/image_embedding.pt
+  train_llm_embedding: false
+
+data:
+  dataset: NAVSIM
+  data_list:
+    - data/navsim_668k.jsonl
+  txt_max_length: 500
+  dataloader_num_workers: 8
+
+grpo:
+  train_size: 103000
+  epochs: 0.5
+  group_size: 3
+  lr: 1.0e-6
+  batch_size: 32
+  warmup_steps: 500
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  reward:
+    safety:
+      - NC
+      - DAC
+    performance:
+      EP: 5
+      TTC: 5
+      Comfort: 2
+  kl:
+    reference_model: sft_checkpoint
+    beta: null
+  clip_epsilon: null
+  sampling:
+    denoise_steps: [1, 3, 5]
+
+logging:
+  log_every: 10
+
+checkpointing:
+  save_steps: 500
